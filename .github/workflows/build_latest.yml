@@ -273,4 +273,3 @@ jobs:
           draft: false
           allowUpdates: true
           generateReleaseNotes: true
-          discussionCategory: "Announcements"
