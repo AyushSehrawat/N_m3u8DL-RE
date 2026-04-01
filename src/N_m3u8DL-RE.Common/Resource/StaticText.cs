@@ -1,4 +1,4 @@
-﻿namespace N_m3u8DL_RE.Common.Resource;
+namespace N_m3u8DL_RE.Common.Resource;
 
 internal static class StaticText
 {
@@ -255,6 +255,12 @@ internal static class StaticText
             zhCN: "为HTTP请求设置特定的请求头, 例如:\r\n-H \"Cookie: mycookie\" -H \"User-Agent: iOS\"",
             zhTW: "為HTTP請求設置特定的請求頭, 例如:\r\n-H \"Cookie: mycookie\" -H \"User-Agent: iOS\"",
             enUS: "Pass custom header(s) to server, Example:\r\n-H \"Cookie: mycookie\" -H \"User-Agent: iOS\""
+        ),
+        ["cmd_cookie"] = new TextContainer
+        (
+            zhCN: "设置Cookie, 使用Netscape格式的Cookie文件, 例如:\r\n--cookie cookies.txt",
+            zhTW: "設置Cookie, 使用Netscape格式的Cookie文件, 例如:\r\n--cookie cookies.txt",
+            enUS: "Set cookies from a Netscape-format cookie file, Example:\r\n--cookie cookies.txt"
         ),
         ["cmd_Input"] = new TextContainer
         (

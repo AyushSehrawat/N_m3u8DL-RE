@@ -40,6 +40,7 @@ internal static partial class CommandInvoker
     private static readonly Option<string?> UrlProcessorArgs = new("--urlprocessor-args") { Description = ResString.cmd_urlProcessorArgs };
     private static readonly Option<string> KeyTextFile = new("--key-text-file") { Description = ResString.cmd_keyText };
     private static readonly Option<Dictionary<string, string>> Headers = new("-H", "--header") { HelpName = "header", Arity = ArgumentArity.OneOrMore, AllowMultipleArgumentsPerToken = false, Description = ResString.cmd_header, CustomParser = ParseHeaders };
+    private static readonly Option<string?> CookieFile = new("--cookie") { HelpName = "FILE", Description = ResString.cmd_cookie };
     private static readonly Option<LogLevel> LogLevel = new("--log-level") { Description = ResString.cmd_logLevel, DefaultValueFactory = _ => Common.Log.LogLevel.INFO };
     private static readonly Option<SubtitleFormat> SubtitleFormat = new("--sub-format") { Description = ResString.cmd_subFormat, DefaultValueFactory = _ => Enum.SubtitleFormat.SRT };
     private static readonly Option<bool> DisableUpdateCheck = new Option<bool>("--disable-update-check") { Description = ResString.cmd_disableUpdateCheck }.WithDefault(false);
@@ -678,9 +679,23 @@ internal static partial class CommandInvoker
         if (result.HasOption(CustomHLSKey)) option.CustomHLSKey = result.GetValue(CustomHLSKey);
         if (result.HasOption(CustomHLSIv)) option.CustomHLSIv = result.GetValue(CustomHLSIv);
 
+        // Process cookie file first (so -H "Cookie: ..." can override if both specified)
+        var cookieFilePath = result.GetValue(CookieFile);
+        if (!string.IsNullOrEmpty(cookieFilePath))
+        {
+            option.CookieFile = cookieFilePath;
+            var cookieHeader = CookieUtil.ParseCookieFile(cookieFilePath);
+            option.Headers["cookie"] = cookieHeader;
+        }
+
         var parsedHeaders = result.GetValue(Headers);
         if (parsedHeaders != null)
-            option.Headers = parsedHeaders;
+        {
+            foreach (var kvp in parsedHeaders)
+            {
+                option.Headers[kvp.Key] = kvp.Value;
+            }
+        }
 
 
         // 以用户选择语言为准优先
@@ -726,7 +741,7 @@ internal static partial class CommandInvoker
         var rootCommand = new RootCommand(VERSION_INFO)
         {
             Input, TmpDir, SaveDir, SaveName, SavePattern, LogFilePath, BaseUrl, ThreadCount, DownloadRetryCount, HttpRequestTimeout, ForceAnsiConsole, NoAnsiColor,AutoSelect, SkipMerge, SkipDownload, CheckSegmentsCount,
-            BinaryMerge, UseFFmpegConcatDemuxer, DelAfterDone, NoDateInfo, NoLog, WriteMetaJson, AppendUrlParams, ConcurrentDownload, Headers, SubOnly, SubtitleFormat, AutoSubtitleFix,
+            BinaryMerge, UseFFmpegConcatDemuxer, DelAfterDone, NoDateInfo, NoLog, WriteMetaJson, AppendUrlParams, ConcurrentDownload, Headers, CookieFile, SubOnly, SubtitleFormat, AutoSubtitleFix,
             FFmpegBinaryPath,
             LogLevel, UILanguage, UrlProcessorArgs, Keys, KeyTextFile, DecryptionEngine, DecryptionBinaryPath, UseShakaPackager, MP4RealTimeDecryption,
             MaxSpeed,
