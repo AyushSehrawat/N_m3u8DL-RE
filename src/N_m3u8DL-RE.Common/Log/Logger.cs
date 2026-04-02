@@ -1,4 +1,4 @@
-﻿using Spectre.Console;
+using Spectre.Console;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -218,7 +218,7 @@ public static partial class Logger
             LogWriteLock.EnterWriteLock();
             using (StreamWriter sw = File.AppendText(LogFilePath))
             {
-                sw.WriteLine(plain, Encoding.UTF8);
+                sw.WriteLine(plain);
             }
         }
         finally
